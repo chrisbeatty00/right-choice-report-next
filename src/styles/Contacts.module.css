@@ -1,0 +1,30 @@
+.table {
+  text-align: left;
+}
+
+.table th {
+  border-bottom: 2px solid black;
+  border-spacing: 0;
+  text-align: left;
+}
+
+.table td {
+  border-spacing: 0;
+  text-align: left;
+}
+
+.small {
+  width: 120px;
+}
+
+.left {
+  text-align: left;
+}
+
+.center {
+  text-align: center;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}

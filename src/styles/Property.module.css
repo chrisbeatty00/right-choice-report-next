@@ -1,0 +1,24 @@
+.heading {
+  font-weight: bold;
+}
+
+.layout {
+  width: 1200px;
+  border: 1px dashed red;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+.strong {
+  font-weight: bold;
+}
+
+.property {
+  width: 100%;
+}
+
+.small {
+  width: 120px;
+}
