@@ -1,3 +1,11 @@
 .heading {
   font-weight: bold;
 }
+
+hr.separator {
+  border: 0;
+  height: 5px;
+  background: #333;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}

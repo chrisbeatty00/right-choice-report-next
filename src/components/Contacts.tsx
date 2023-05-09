@@ -35,10 +35,12 @@ function Contacts({ contacts = {} }: ContactProps) {
       <table className={styles.table} cellSpacing={0} cellPadding={0}>
         <tbody>
           <tr>
-            <th>Type</th>
-            <th className={styles.small}>End</th>
-            <th>Name</th>
-            <th>Address</th>
+            <th style={{ width: "22%" }}>Type</th>
+            <th style={{ width: "10%" }} className={styles.small}>
+              End
+            </th>
+            <th style={{ width: "32%" }}>Name</th>
+            <th style={{ width: "40%" }}>Address</th>
           </tr>
           {Object.values(contacts)
             .filter((contact) => contact.role !== "outside_brokerage")

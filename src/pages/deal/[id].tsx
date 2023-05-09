@@ -8,6 +8,7 @@ import Contacts from "../../components/Contacts";
 import type { Contact, Deal } from "../../types.js";
 import { getContacts } from "../../lib/getAddress.js";
 import OutsideBrokers from "../../components/OutsideBrokers";
+import Deposit from "../../components/Deposit";
 
 const FULL_DEAL_NUMBER = "419-2021-0305";
 
@@ -59,6 +60,8 @@ export default function DealReport({ deal, contacts = {} }: DealProps) {
           <Property deal={deal} />
           <Contacts contacts={contacts} />
           <OutsideBrokers contacts={contacts} />
+          <hr className={styles.separator} />
+          <Deposit />
         </div>
       </main>
     </>
