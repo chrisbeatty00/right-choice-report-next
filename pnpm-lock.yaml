@@ -4,6 +4,7 @@ specifiers:
   '@types/node': 18.16.0
   '@types/react': 18.0.38
   '@types/react-dom': 18.0.11
+  classnames: ^2.3.2
   eslint: 8.39.0
   eslint-config-next: 13.3.1
   express: ^4.18.2
@@ -19,6 +20,7 @@ dependencies:
   '@types/node': 18.16.0
   '@types/react': 18.0.38
   '@types/react-dom': 18.0.11
+  classnames: 2.3.2
   eslint: 8.39.0
   eslint-config-next: 13.3.1_iacogk7kkaymxepzhgcbytyi7q
   express: 4.18.2
@@ -669,6 +671,10 @@ packages:
     dependencies:
       devtools-protocol: 0.0.1107588
       mitt: 3.0.0
+    dev: false
+
+  /classnames/2.3.2:
+    resolution: {integrity: sha512-CSbhY4cFEJRe6/GQzIk5qXZ4Jeg5pcsP7b5peFSDpffpe1cqjASH/n9UTjBwOp6XpMSTwQ8Za2K5V02ueA7Tmw==}
     dev: false
 
   /client-only/0.0.1:

@@ -15,6 +15,7 @@ export type Contact = {
   email: string;
   firstEmail: string;
   address: Address;
+  organizationName: string;
 };
 
 export type Address = {
@@ -33,4 +34,11 @@ export type Deal = {
   closedAt: string;
   mlsNumber: string;
   fullDealNumber: string;
+};
+
+export type Broker = {
+  name: string;
+  type: string;
+  end: string;
+  agent: string;
 };

@@ -1,9 +1,9 @@
 import styles from "@right-choice/styles/Contacts.module.css";
-import { Side, Role, Contact, Address } from "../types";
+import { Contact, Address } from "../types";
 import toNoCase from "to-no-case";
 
 export type ContactProps = {
-  contacts: Contact[];
+  contacts: Record<string, Contact>;
 };
 
 const formatAddress = (address: Address) => {
@@ -16,7 +16,17 @@ const formatAddress = (address: Address) => {
   }
 };
 
-function Contacts({ contacts = [] }: ContactProps) {
+const sort = (a: Contact, b: Contact) => {
+  if (a.side < b.side) {
+    return 1;
+  }
+  if (a.side > b.side) {
+    return -1;
+  }
+  return 0;
+};
+
+function Contacts({ contacts = {} }: ContactProps) {
   return (
     <>
       <div>
@@ -30,16 +40,20 @@ function Contacts({ contacts = [] }: ContactProps) {
             <th>Name</th>
             <th>Address</th>
           </tr>
-          {Object.values(contacts).map((contact) => (
-            <tr key={contact.profileId}>
-              <td className={styles.capitalize}>{toNoCase(contact.role)}</td>
-              <td className={styles.center}>
-                {contact.side === "list" ? "L" : "B"}
-              </td>
-              <td>{contact.name}</td>
-              <td>{formatAddress(contact.address)}</td>
-            </tr>
-          ))}
+          {Object.values(contacts)
+            .filter((contact) => contact.role !== "outside_brokerage")
+            .filter((contact) => contact.role !== "agent")
+            .sort(sort)
+            .map((contact) => (
+              <tr key={contact.profileId}>
+                <td className={styles.capitalize}>{toNoCase(contact.role)}</td>
+                <td className={styles.center}>
+                  {contact.side === "list" ? "L" : "B"}
+                </td>
+                <td>{contact.name}</td>
+                <td>{formatAddress(contact.address)}</td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </>
