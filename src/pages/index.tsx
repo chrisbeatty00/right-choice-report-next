@@ -19,7 +19,6 @@ export default function Home({ testProp }: { testProp: string }) {
         <div className={styles.description}>
           <div>Test test</div>
           <div>{testProp}</div>
-          <div>More content</div>
         </div>
       </main>
     </>

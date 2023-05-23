@@ -2,10 +2,10 @@ import Head from "next/head";
 import styles from "@right-choice/styles/Deal.module.css";
 import deal from "../../deal.js";
 import accesses from "../../accesses.js";
-import profiles from "../../profiles.js";
+import transactions from "../../transactions.js";
 import Property from "../../components/Property";
 import Contacts from "../../components/Contacts";
-import type { Contact, Deal } from "../../types.js";
+import type { Contact, Deal, Transaction } from "../../types.js";
 import { getContacts } from "../../lib/getAddress.js";
 import OutsideBrokers from "../../components/OutsideBrokers";
 import Deposit from "../../components/Deposit";
@@ -27,14 +27,21 @@ function getDeal(fullDealNumber: string): Deal {
   };
 }
 
+export function getTransactions(dealId: string): Transaction[] {
+  const data = transactions.data as unknown;
+  return data as Transaction[];
+}
+
 export function getStaticProps() {
   const deal = getDeal(FULL_DEAL_NUMBER);
   const contacts = fetchContacts(deal.id);
+  const transactions = getTransactions(deal.id);
 
   return {
     props: {
       deal,
       contacts,
+      transactions,
     },
   };
 }
@@ -42,9 +49,14 @@ export function getStaticProps() {
 type DealProps = {
   deal: any;
   contacts: Record<string, Contact>;
+  transactions: Transaction[];
 };
 
-export default function DealReport({ deal, contacts = {} }: DealProps) {
+export default function DealReport({
+  deal,
+  contacts = {},
+  transactions = [],
+}: DealProps) {
   if (!deal || !contacts) {
     return <div>nothing</div>;
   }
@@ -61,7 +73,7 @@ export default function DealReport({ deal, contacts = {} }: DealProps) {
           <Contacts contacts={contacts} />
           <OutsideBrokers contacts={contacts} />
           <hr className={styles.separator} />
-          <Deposit />
+          <Deposit transactions={transactions} />
         </div>
       </main>
     </>

@@ -42,3 +42,17 @@ export type Broker = {
   end: string;
   agent: string;
 };
+
+export type Transaction = {
+  id: string;
+  bankTransaction: "bankTransaction";
+  attributes: {
+    amount: string;
+    contactName: string;
+    createdAt: string;
+    description: string;
+    displayName: string;
+    postedAt: string;
+    type: "TrustDepositTransaction";
+  };
+};
