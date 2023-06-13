@@ -823,15 +823,38 @@ module.exports = {
       },
     },
   ],
+  included: [
+    {
+      id: "916",
+      type: "bankAccountMapping",
+      attributes: {
+        name: "BMO - Trust (9968)",
+      },
+    },
+    {
+      id: "915",
+      type: "bankAccountMapping",
+      attributes: {
+        name: "BMO - Commission (9976)",
+      },
+    },
+    {
+      id: "917",
+      type: "bankAccountMapping",
+      attributes: {
+        name: "BMO - Operating (0045)",
+      },
+    },
+  ],
   meta: {
     count: 11,
   },
   links: {
     first:
-      "https://api.loft47.com/v1/brokerages/310/deals/158012/transactions?page%5Bnumber%5D=1",
-    self: "https://api.loft47.com/v1/brokerages/310/deals/158012/transactions?page%5Bnumber%5D=1",
-    prev: "https://api.loft47.com/v1/brokerages/310/deals/158012/transactions?page%5Bnumber%5D=1",
-    next: "https://api.loft47.com/v1/brokerages/310/deals/158012/transactions?page%5Bnumber%5D=2",
-    last: "https://api.loft47.com/v1/brokerages/310/deals/158012/transactions?page%5Bnumber%5D=2",
+      "https://api.loft47.com/v1/brokerages/310/deals/158012/transactions?include=bank_account_mapping&page%5Bnumber%5D=1",
+    self: "https://api.loft47.com/v1/brokerages/310/deals/158012/transactions?include=bank_account_mapping&page%5Bnumber%5D=1",
+    prev: "https://api.loft47.com/v1/brokerages/310/deals/158012/transactions?include=bank_account_mapping&page%5Bnumber%5D=1",
+    next: "https://api.loft47.com/v1/brokerages/310/deals/158012/transactions?include=bank_account_mapping&page%5Bnumber%5D=2",
+    last: "https://api.loft47.com/v1/brokerages/310/deals/158012/transactions?include=bank_account_mapping&page%5Bnumber%5D=2",
   },
 };

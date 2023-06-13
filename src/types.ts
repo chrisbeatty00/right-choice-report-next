@@ -34,6 +34,7 @@ export type Deal = {
   closedAt: string;
   mlsNumber: string;
   fullDealNumber: string;
+  sellPrice: string;
 };
 
 export type Broker = {
@@ -54,5 +55,38 @@ export type Transaction = {
     displayName: string;
     postedAt: string;
     type: "TrustDepositTransaction";
+  };
+  relationships: {
+    bankAccountMapping: {
+      data: {
+        id: string;
+      };
+    };
+  };
+};
+
+export type BankAccountMapping = {
+  id: string;
+  type: "bankAccountMapping";
+  attributes: {
+    name: string;
+  };
+};
+
+export type TransactionData = {
+  data: Transaction[];
+  included: BankAccountMapping[];
+};
+
+export type FinancialData = {
+  data?: {
+    id: string;
+    type: string;
+    attributes: {
+      listingBonusOrFlatFee: string;
+      sellBonusOrFlatFee: string;
+      listingOnTheFirstPercent: string;
+      sellOnTheFirstPercent: string;
+    };
   };
 };

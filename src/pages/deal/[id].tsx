@@ -1,14 +1,21 @@
 import Head from "next/head";
 import styles from "@right-choice/styles/Deal.module.css";
-import deal from "../../deal.js";
-import accesses from "../../accesses.js";
-import transactions from "../../transactions.js";
 import Property from "../../components/Property";
 import Contacts from "../../components/Contacts";
-import type { Contact, Deal, Transaction } from "../../types.js";
+import type {
+  Contact,
+  Deal,
+  TransactionData,
+  FinancialData,
+} from "../../types.js";
 import { getContacts } from "../../lib/getAddress.js";
 import OutsideBrokers from "../../components/OutsideBrokers";
 import Deposit from "../../components/Deposit";
+import Financial from "../../components/Financial";
+// data
+import deal from "../../deal.js";
+import transactions from "../../transactions.js";
+import financials from "../../financials.js";
 
 const FULL_DEAL_NUMBER = "419-2021-0305";
 
@@ -27,21 +34,26 @@ function getDeal(fullDealNumber: string): Deal {
   };
 }
 
-export function getTransactions(dealId: string): Transaction[] {
-  const data = transactions.data as unknown;
-  return data as Transaction[];
+function getTransactions(dealId: string): TransactionData {
+  return transactions as unknown as TransactionData;
+}
+
+function getFinancials(dealId: string): FinancialData {
+  return financials as unknown as FinancialData;
 }
 
 export function getStaticProps() {
   const deal = getDeal(FULL_DEAL_NUMBER);
   const contacts = fetchContacts(deal.id);
-  const transactions = getTransactions(deal.id);
+  const transactionData = getTransactions(deal.id);
+  const financialData = getFinancials(deal.id);
 
   return {
     props: {
       deal,
       contacts,
-      transactions,
+      transactionData,
+      financialData,
     },
   };
 }
@@ -49,13 +61,18 @@ export function getStaticProps() {
 type DealProps = {
   deal: any;
   contacts: Record<string, Contact>;
-  transactions: Transaction[];
+  transactionData: TransactionData;
+  financialData: FinancialData;
 };
 
 export default function DealReport({
   deal,
   contacts = {},
-  transactions = [],
+  transactionData = {
+    data: [],
+    included: [],
+  },
+  financialData = {},
 }: DealProps) {
   if (!deal || !contacts) {
     return <div>nothing</div>;
@@ -73,7 +90,13 @@ export default function DealReport({
           <Contacts contacts={contacts} />
           <OutsideBrokers contacts={contacts} />
           <hr className={styles.separator} />
-          <Deposit transactions={transactions} />
+          <Deposit transactionData={transactionData} />
+          <hr className={styles.separator} />
+          <Financial
+            financialData={financialData}
+            deal={deal}
+            transactionData={transactionData}
+          />
         </div>
       </main>
     </>

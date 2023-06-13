@@ -1,5 +1,7 @@
 import styles from "@right-choice/styles/Deposit.module.css";
-import type { Transaction } from "../types";
+import type { TransactionData } from "../types";
+
+const TRUST_ACCOUNT_ID = 916;
 
 const formatDate = (date: string) =>
   new Date(date).toLocaleDateString("en-CA", { dateStyle: "long" });
@@ -8,15 +10,17 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });
-const thing = currencyFormatter.resolvedOptions().maximumFractionDigits;
 
 const formatCurrency = (amount: string) =>
   currencyFormatter.format(parseInt(amount, 10));
 
-function Deposit({ transactions = [] }: { transactions: Transaction[] }) {
-  console.log(
-    transactions.map((t) => [t.attributes.type, t.attributes.contactName])
-  );
+function Deposit({ transactionData }: { transactionData: TransactionData }) {
+  const trustAccountMapping = transactionData.included.find((included) => {
+    return (
+      included.type === "bankAccountMapping" &&
+      included.id === TRUST_ACCOUNT_ID.toString()
+    );
+  });
 
   return (
     <>
@@ -31,18 +35,20 @@ function Deposit({ transactions = [] }: { transactions: Transaction[] }) {
             <th>Held By</th>
             <th>Received From</th>
           </tr>
-          {transactions
+          {transactionData.data
             .filter(
               (transaction) =>
-                transaction.attributes.type === "TrustDepositTransaction"
+                transaction.attributes.type === "TrustDepositTransaction" &&
+                transaction.relationships.bankAccountMapping.data.id ===
+                  TRUST_ACCOUNT_ID.toString()
             )
             .map((transaction) => (
               <tr key={transaction.id}>
-                <td>Real Estate Trust</td>
+                <td>{trustAccountMapping?.attributes.name}</td>
                 <td>{formatDate(transaction.attributes.createdAt)}</td>
                 <td>{formatCurrency(transaction.attributes.amount)}</td>
-                <td>{}</td>
-                <td>{}</td>
+                <td></td>
+                <td>The Right Choice Brokerage Ltd</td>
                 <td>{transaction.attributes.contactName}</td>
               </tr>
             ))}

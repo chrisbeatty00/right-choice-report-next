@@ -26,7 +26,6 @@ function OutsideBrokers({ contacts }: Props) {
           </tr>
           {Object.values(contacts)
             .filter((contact) => contact.role === "outside_brokerage")
-            .filter((contact) => contact.side === "sell")
             .map((contact) => (
               <tr key={contact.name}>
                 <td className={styles.capitalize}>{toNoCase(contact.role)}</td>

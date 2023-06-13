@@ -1,0 +1,39 @@
+.heading {
+  display: flex;
+}
+
+.heading > div {
+  flex: 1;
+}
+
+.heading .feeTable {
+  width: 100%;
+}
+
+.heading .feeTable th {
+  width: 20%;
+  text-align: right;
+}
+
+.heading .feeTable td {
+  padding-left: 1em;
+}
+
+.heading .feeTable .value {
+  margin-left: 1em;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.table th,
+.table td {
+  text-align: left;
+}
+
+.table th {
+  color: black;
+}
