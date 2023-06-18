@@ -2,8 +2,9 @@ import styles from "@right-choice/styles/Financial.module.css";
 import type { FinancialData, TransactionData, Deal } from "../types";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
+  style: "decimal",
+  maximumFractionDigits: 2,
+  minimumFractionDigits: 2,
 });
 
 const formatCurrency = (amount: string | undefined) => {
@@ -30,7 +31,7 @@ const calculateRates = (
 
 function Financial({
   financialData = {},
-  transactionData = [],
+  transactionData,
   deal,
 }: {
   financialData: FinancialData;
@@ -97,7 +98,48 @@ function Financial({
           </table>
         </div>
       </div>
+      <IncomeTable {...financialData.data?.attributes} />
     </>
+  );
+}
+
+function IncomeTable({
+  listTotalNet,
+  sellTotalNet,
+  totalNet,
+  totalTax,
+  totalGross,
+}: {
+  listTotalNet?: string | undefined;
+  sellTotalNet?: string | undefined;
+  totalNet?: string | undefined;
+  totalTax?: string | undefined;
+  totalGross?: string | undefined;
+} = {}) {
+  return (
+    <table className={styles.financial}>
+      <tbody>
+        <tr>
+          <th>Income</th>
+          <th>Listing</th>
+          <th>Selling</th>
+          <th>Sub-Total</th>
+          <th>HST</th>
+          <th>Total</th>
+        </tr>
+        <tr>
+          <td>Commission</td>
+          <td className={styles.currency}>{formatCurrency(listTotalNet)}</td>
+          <td className={styles.currency}>{formatCurrency(sellTotalNet)}</td>
+          <td className={styles.currency}>{formatCurrency(totalNet)}</td>
+          <td className={styles.currency}>{formatCurrency(totalTax)}</td>
+          <td className={styles.currency}>{formatCurrency(totalGross)}</td>
+        </tr>
+        <tr>
+          <th colSpan={6}>Expenses</th>
+        </tr>
+      </tbody>
+    </table>
   );
 }
 

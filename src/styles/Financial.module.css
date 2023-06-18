@@ -37,3 +37,29 @@
 .table th {
   color: black;
 }
+
+table.financial {
+  margin-top: 1rem;
+}
+
+table.financial td:first-child,
+table.financial th:first-child {
+  width: 35%;
+}
+
+table.financial td,
+table.financial th {
+  text-align: left;
+  padding-right: 1rem;
+}
+
+table.financial td.currency {
+  position: relative;
+  text-align: right;
+}
+
+.currency:before {
+  content: "$";
+  position: absolute;
+  left: 0;
+}

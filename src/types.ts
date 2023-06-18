@@ -87,6 +87,30 @@ export type FinancialData = {
       sellBonusOrFlatFee: string;
       listingOnTheFirstPercent: string;
       sellOnTheFirstPercent: string;
+      listTotalNet: string;
+      sellTotalNet: string;
+      totalNet: string;
+      totalTax: string;
+      totalGross: string;
     };
   };
+};
+
+export type Payout = {
+  id: string;
+  type: "payout";
+  attributes: {
+    amount: string;
+    paid: boolean;
+    payable: boolean;
+    payableName: string;
+    payeeName: string;
+    payeeOrganization: string;
+    external: boolean;
+    side: "sell" | "list";
+  };
+};
+
+export type PayoutData = {
+  data?: Payout[];
 };

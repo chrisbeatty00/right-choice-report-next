@@ -42,6 +42,10 @@ function getFinancials(dealId: string): FinancialData {
   return financials as unknown as FinancialData;
 }
 
+function getPayouts(dealId: string): PayoutData {
+  return payouts as unknown as PayoutData;
+}
+
 export function getStaticProps() {
   const deal = getDeal(FULL_DEAL_NUMBER);
   const contacts = fetchContacts(deal.id);
