@@ -1,17 +1,16 @@
 import styles from "@right-choice/styles/Financial.module.css";
-import type { FinancialData, TransactionData, Deal } from "../types";
+import type { FinancialData, TransactionData, SplitData, Deal } from "../types";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
-  style: "decimal",
-  maximumFractionDigits: 2,
-  minimumFractionDigits: 2,
+  style: "currency",
+  currency: "USD",
 });
 
 const formatCurrency = (amount: string | undefined) => {
   if (!amount) return "-";
 
-  const value = parseInt(amount, 10);
-  return value === 0 ? "-" : currencyFormatter.format(value);
+  const value = parseFloat(amount);
+  return value === 0 ? "-" : currencyFormatter.format(value).replace(/^\$/, "");
 };
 
 const calculateRates = (
@@ -33,10 +32,12 @@ function Financial({
   financialData = {},
   transactionData,
   deal,
+  splitData,
 }: {
   financialData: FinancialData;
   transactionData: TransactionData;
   deal: Deal;
+  splitData: SplitData;
 }) {
   const listFlatFee = formatCurrency(
     financialData?.data?.attributes?.listingBonusOrFlatFee
@@ -98,7 +99,7 @@ function Financial({
           </table>
         </div>
       </div>
-      <IncomeTable {...financialData.data?.attributes} />
+      <IncomeTable {...financialData.data?.attributes} splitData={splitData} />
     </>
   );
 }
@@ -109,13 +110,15 @@ function IncomeTable({
   totalNet,
   totalTax,
   totalGross,
+  splitData,
 }: {
   listTotalNet?: string | undefined;
   sellTotalNet?: string | undefined;
   totalNet?: string | undefined;
   totalTax?: string | undefined;
   totalGross?: string | undefined;
-} = {}) {
+  splitData: SplitData;
+}) {
   return (
     <table className={styles.financial}>
       <tbody>
@@ -138,6 +141,32 @@ function IncomeTable({
         <tr>
           <th colSpan={6}>Expenses</th>
         </tr>
+        {splitData.data
+          .filter((split) => {
+            return splitData.included.find(
+              (dealAccess) =>
+                dealAccess.id === split.relationships.dealAccess.data.id &&
+                dealAccess.attributes.role === "outside_brokerage"
+            );
+          })
+          .map((split) => (
+            <tr key={split.id}>
+              <td>fill this in</td>
+              <td></td>
+              <td className={styles.currency}>
+                {formatCurrency(split.attributes.net)}
+              </td>
+              <td className={styles.currency}>
+                {formatCurrency(split.attributes.net)}
+              </td>
+              <td className={styles.currency}>
+                {formatCurrency(split.attributes.tax)}
+              </td>
+              <td className={styles.currency}>
+                {formatCurrency(split.attributes.total)}
+              </td>
+            </tr>
+          ))}
       </tbody>
     </table>
   );

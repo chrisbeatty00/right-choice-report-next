@@ -114,3 +114,38 @@ export type Payout = {
 export type PayoutData = {
   data?: Payout[];
 };
+
+export type Split = {
+  id: string;
+  type: "split";
+  attributes: {
+    side: "list" | "sell";
+    net: "string";
+    tax: "string";
+    total: "string";
+  };
+  relationships: {
+    dealAccess: {
+      data: {
+        id: "string";
+        type: "dealAccess";
+      };
+    };
+  };
+};
+
+export type DealAccess = {
+  id: "string";
+  type: "dealAccess";
+  attributes: {
+    role: "agent" | "outside_brokerage";
+    side: "list" | "sell";
+    profileId: number;
+    dealId: number;
+  };
+};
+
+export type SplitData = {
+  data: Split[];
+  included: DealAccess[];
+};
