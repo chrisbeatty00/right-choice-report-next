@@ -8,7 +8,6 @@ type Props = {
 };
 
 function OutsideBrokers({ contacts }: Props) {
-  console.dir(contacts);
   return (
     <>
       <div>

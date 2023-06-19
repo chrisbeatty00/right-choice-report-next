@@ -1,5 +1,6 @@
 import styles from "@right-choice/styles/Financial.module.css";
 import type { FinancialData, TransactionData, SplitData, Deal } from "../types";
+import type { Split } from "../lib/getSplits";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -31,13 +32,13 @@ const calculateRates = (
 function Financial({
   financialData = {},
   transactionData,
+  splits,
   deal,
-  splitData,
 }: {
   financialData: FinancialData;
   transactionData: TransactionData;
+  splits: Split[];
   deal: Deal;
-  splitData: SplitData;
 }) {
   const listFlatFee = formatCurrency(
     financialData?.data?.attributes?.listingBonusOrFlatFee
@@ -99,7 +100,7 @@ function Financial({
           </table>
         </div>
       </div>
-      <IncomeTable {...financialData.data?.attributes} splitData={splitData} />
+      <IncomeTable {...financialData.data?.attributes} splits={splits} />
     </>
   );
 }
@@ -110,14 +111,14 @@ function IncomeTable({
   totalNet,
   totalTax,
   totalGross,
-  splitData,
+  splits,
 }: {
   listTotalNet?: string | undefined;
   sellTotalNet?: string | undefined;
   totalNet?: string | undefined;
   totalTax?: string | undefined;
   totalGross?: string | undefined;
-  splitData: SplitData;
+  splits: Split[];
 }) {
   return (
     <table className={styles.financial}>
@@ -141,32 +142,19 @@ function IncomeTable({
         <tr>
           <th colSpan={6}>Expenses</th>
         </tr>
-        {splitData.data
-          .filter((split) => {
-            return splitData.included.find(
-              (dealAccess) =>
-                dealAccess.id === split.relationships.dealAccess.data.id &&
-                dealAccess.attributes.role === "outside_brokerage"
-            );
-          })
-          .map((split) => (
-            <tr key={split.id}>
-              <td>fill this in</td>
-              <td></td>
-              <td className={styles.currency}>
-                {formatCurrency(split.attributes.net)}
-              </td>
-              <td className={styles.currency}>
-                {formatCurrency(split.attributes.net)}
-              </td>
-              <td className={styles.currency}>
-                {formatCurrency(split.attributes.tax)}
-              </td>
-              <td className={styles.currency}>
-                {formatCurrency(split.attributes.total)}
-              </td>
-            </tr>
-          ))}
+        {splits.map((split) => (
+          <tr key={split.id}>
+            <td>
+              {split.side === "list" ? "Referral-" : ""}
+              {split.organizationName}
+            </td>
+            <td>-</td>
+            <td className={styles.currency}>{split.net}</td>
+            <td className={styles.currency}>{split.net}</td>
+            <td className={styles.currency}>{split.tax}</td>
+            <td className={styles.currency}>{split.total}</td>
+          </tr>
+        ))}
       </tbody>
     </table>
   );

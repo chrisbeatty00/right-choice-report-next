@@ -10,14 +10,18 @@ import type {
   SplitData,
 } from "../../types.js";
 import { getContacts } from "../../lib/getAddress.js";
+import { getSplits, Split } from "../../lib/getSplits";
 import OutsideBrokers from "../../components/OutsideBrokers";
 import Deposit from "../../components/Deposit";
 import Financial from "../../components/Financial";
+
 // data
 import deal from "../../deal.js";
 import transactions from "../../transactions.js";
 import financials from "../../financials.js";
 import splits from "../../splits.js";
+import accesses from "../../accesses";
+import profiles from "../../profiles";
 
 const FULL_DEAL_NUMBER = "419-2021-0305";
 
@@ -44,16 +48,12 @@ function getFinancials(dealId: string): FinancialData {
   return financials as unknown as FinancialData;
 }
 
-function getSplits(dealId: string): SplitData {
-  return splits as unknown as SplitData;
-}
-
 export function getStaticProps() {
   const deal = getDeal(FULL_DEAL_NUMBER);
   const contacts = fetchContacts(deal.id);
   const transactionData = getTransactions(deal.id);
   const financialData = getFinancials(deal.id);
-  const splitData = getSplits(deal.id);
+  const splits = getSplits(deal.id);
 
   return {
     props: {
@@ -61,7 +61,7 @@ export function getStaticProps() {
       contacts,
       transactionData,
       financialData,
-      splitData,
+      splits,
     },
   };
 }
@@ -71,7 +71,7 @@ type DealProps = {
   contacts: Record<string, Contact>;
   transactionData: TransactionData;
   financialData: FinancialData;
-  splitData: SplitData;
+  splits: Split[];
 };
 
 export default function DealReport({
@@ -82,7 +82,7 @@ export default function DealReport({
     included: [],
   },
   financialData = {},
-  splitData = {},
+  splits = [],
 }: DealProps) {
   if (!deal || !contacts) {
     return <div>nothing</div>;
@@ -106,7 +106,7 @@ export default function DealReport({
             financialData={financialData}
             deal={deal}
             transactionData={transactionData}
-            splitData={splitData}
+            splits={splits}
           />
         </div>
       </main>
