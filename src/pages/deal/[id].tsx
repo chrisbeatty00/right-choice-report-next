@@ -10,7 +10,7 @@ import type {
   SplitData,
 } from "../../types.js";
 import { getContacts } from "../../lib/getAddress.js";
-import { getSplits, Split } from "../../lib/getSplits";
+import { getSplits, Splits } from "../../lib/getSplits";
 import OutsideBrokers from "../../components/OutsideBrokers";
 import Deposit from "../../components/Deposit";
 import Financial from "../../components/Financial";
@@ -71,7 +71,7 @@ type DealProps = {
   contacts: Record<string, Contact>;
   transactionData: TransactionData;
   financialData: FinancialData;
-  splits: Split[];
+  splits: Splits;
 };
 
 export default function DealReport({
@@ -82,7 +82,7 @@ export default function DealReport({
     included: [],
   },
   financialData = {},
-  splits = [],
+  splits,
 }: DealProps) {
   if (!deal || !contacts) {
     return <div>nothing</div>;

@@ -40,6 +40,8 @@
 
 table.financial {
   margin-top: 1rem;
+  border-spacing: 0px;
+  border-collapse: separate;
 }
 
 table.financial td:first-child,
@@ -62,4 +64,12 @@ table.financial td.currency {
   content: "$";
   position: absolute;
   left: 0;
+}
+
+.borderTop {
+  border-top: 1px solid black;
+}
+
+.borderBottomHeavy {
+  border-bottom: 3px solid black;
 }

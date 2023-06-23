@@ -1,6 +1,6 @@
-import splits from "../splits";
-import accesses from "../accesses";
-import profiles from "../profiles";
+import splitData from "../splits";
+import accessesData from "../accesses";
+import profilesData from "../profiles";
 import formatCurrency from "./formatCurrency";
 
 export type Split = {
@@ -14,35 +14,60 @@ export type Split = {
   total: string;
 };
 
-export function getSplits(dealId: string): Split[] {
-  const expenses = splits.data
-    .map((split) => {
-      const dealAccess = accesses.data.find(
-        (access) => access.id === split.relationships.dealAccess.data.id
-      );
+export type Splits = {
+  commission: Split[];
+  expenses: Split[];
+  agents: Split[];
+};
 
-      if (!dealAccess) throw new Error("Deal access not found");
+export function getSplits(dealId: string): Splits {
+  const commission = [] as Split[];
 
-      const profile = profiles.data.find(
-        (profile) => profile.id === dealAccess.relationships.profile.data.id
-      );
+  const splits: Split[] = splitData.data.map((split) => {
+    const dealAccess = accessesData.data.find(
+      (access) => access.id === split.relationships.dealAccess.data.id
+    );
 
-      if (!profile) throw new Error("Profile not found");
+    if (!dealAccess) throw new Error(`Deal access not found: ${dealAccess}`);
 
-      return {
-        id: split.id,
-        name: profile.attributes.name,
-        organizationName: profile.attributes.organizationName,
-        role: dealAccess.attributes.role,
-        side: dealAccess.attributes.side,
-        net: formatCurrency(split.attributes.net),
-        tax: formatCurrency(split.attributes.tax),
-        total: formatCurrency(split.attributes.total),
-      };
-    })
+    const profile = profilesData.data.find(
+      (profile) => profile.id === dealAccess.relationships.profile.data.id
+    );
+
+    if (!profile) throw new Error(`Profile not found: ${profile}`);
+
+    return {
+      id: split.id,
+      name: profile.attributes.name,
+      organizationName: profile.attributes.organizationName,
+      role: dealAccess.attributes.role,
+      side: dealAccess.attributes.side,
+      net: formatCurrency(split.attributes.net),
+      tax: formatCurrency(split.attributes.tax),
+      total: formatCurrency(split.attributes.total),
+    };
+  });
+
+  const expenses = getExpenses(splits);
+  const agents = getAgents(splits);
+
+  return {
+    commission,
+    expenses,
+    agents,
+  };
+}
+
+function getExpenses(allSplits: Split[]): Split[] {
+  return allSplits
     .filter((split) => split.role === "outside_brokerage")
     .sort((a, b) => a.side.localeCompare(b.side))
     .reverse();
+}
 
-  return expenses;
+function getAgents(allSplits: Split[]): Split[] {
+  return allSplits
+    .filter((split) => split.role === "agent")
+    .sort((a, b) => a.side.localeCompare(b.side))
+    .reverse();
 }

@@ -1,6 +1,7 @@
 import styles from "@right-choice/styles/Financial.module.css";
 import type { FinancialData, TransactionData, SplitData, Deal } from "../types";
-import type { Split } from "../lib/getSplits";
+import type { Splits } from "../lib/getSplits";
+import cx from "classnames";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -37,7 +38,7 @@ function Financial({
 }: {
   financialData: FinancialData;
   transactionData: TransactionData;
-  splits: Split[];
+  splits: Splits;
   deal: Deal;
 }) {
   const listFlatFee = formatCurrency(
@@ -118,7 +119,7 @@ function IncomeTable({
   totalNet?: string | undefined;
   totalTax?: string | undefined;
   totalGross?: string | undefined;
-  splits: Split[];
+  splits: Splits;
 }) {
   return (
     <table className={styles.financial}>
@@ -142,19 +143,55 @@ function IncomeTable({
         <tr>
           <th colSpan={6}>Expenses</th>
         </tr>
-        {splits.map((split) => (
+        {splits.expenses.map((split) => (
           <tr key={split.id}>
             <td>
               {split.side === "list" ? "Referral-" : ""}
               {split.organizationName}
             </td>
-            <td>-</td>
+            <td className={styles.currency}>-</td>
             <td className={styles.currency}>{split.net}</td>
             <td className={styles.currency}>{split.net}</td>
             <td className={styles.currency}>{split.tax}</td>
             <td className={styles.currency}>{split.total}</td>
           </tr>
         ))}
+        {splits.expenses.length > 0 && (
+          <tr>
+            <td>Base Office Commission</td>
+            <td className={styles.borderTop}></td>
+            <td className={styles.borderTop}></td>
+            <td className={styles.borderTop}></td>
+            <td className={styles.borderTop}></td>
+            <td className={styles.borderTop}></td>
+          </tr>
+        )}
+        <tr>
+          <th colSpan={6}>Agents</th>
+        </tr>
+        {splits.agents.map((split) => (
+          <tr key={split.id}>
+            <td>{split.name}</td>
+            <td className={styles.currency}>{split.net}</td>
+            <td className={styles.currency}>-</td>
+            <td className={styles.currency}>{split.net}</td>
+            <td className={styles.currency}>{split.tax}</td>
+            <td className={styles.currency}>{split.total}</td>
+          </tr>
+        ))}
+        {splits.agents.length > 0 && (
+          <tr>
+            <td></td>
+            <td className={styles.borderBottomHeavy}></td>
+            <td className={cx(styles.currency, styles.borderBottomHeavy)}>-</td>
+            <td className={cx(styles.currency, styles.borderBottomHeavy)}>-</td>
+            <td className={cx(styles.currency, styles.borderBottomHeavy)}>-</td>
+            <td className={cx(styles.currency, styles.borderBottomHeavy)}>-</td>
+          </tr>
+        )}
+        <tr>
+          <th colSpan={6}>Net to Office</th>
+        </tr>
       </tbody>
     </table>
   );
