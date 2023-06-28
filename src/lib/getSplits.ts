@@ -1,7 +1,7 @@
 import splitData from "../splits";
 import accessesData from "../accesses";
 import profilesData from "../profiles";
-import formatCurrency from "./formatCurrency";
+import financialData from "../financials";
 
 export type Split = {
   id: string;
@@ -9,7 +9,9 @@ export type Split = {
   organizationName: string | null;
   role: string;
   side: string;
-  net: string;
+  list: string;
+  sell: string;
+  subtotal: string;
   tax: string;
   total: string;
 };
@@ -21,7 +23,7 @@ export type Splits = {
 };
 
 export function getSplits(dealId: string): Splits {
-  const commission = [] as Split[];
+  const commission = getComissions(dealId);
 
   const splits: Split[] = splitData.data.map((split) => {
     const dealAccess = accessesData.data.find(
@@ -36,15 +38,25 @@ export function getSplits(dealId: string): Splits {
 
     if (!profile) throw new Error(`Profile not found: ${profile}`);
 
+    const { side, role } = dealAccess.attributes;
+
     return {
       id: split.id,
       name: profile.attributes.name,
       organizationName: profile.attributes.organizationName,
-      role: dealAccess.attributes.role,
-      side: dealAccess.attributes.side,
-      net: formatCurrency(split.attributes.net),
-      tax: formatCurrency(split.attributes.tax),
-      total: formatCurrency(split.attributes.total),
+      role,
+      side,
+      sell:
+        role === "outside_brokerage" || side === "sell"
+          ? split.attributes.net
+          : "0",
+      list:
+        side === "list" && role !== "outside_brokerage"
+          ? split.attributes.net
+          : "0",
+      subtotal: split.attributes.net, // TODO: This could the sum of sell + list
+      tax: split.attributes.tax,
+      total: split.attributes.total, // TODO: This could be a sum also but it could be better to use the server value
     };
   });
 
@@ -56,6 +68,23 @@ export function getSplits(dealId: string): Splits {
     expenses,
     agents,
   };
+}
+
+function getComissions(dealId: string): Split[] {
+  return [
+    {
+      id: "commission",
+      name: "Commission",
+      list: financialData.data.attributes.listTotalNet,
+      sell: financialData.data.attributes.sellTotalNet,
+      subtotal: financialData.data.attributes.totalNet,
+      tax: financialData.data.attributes.totalTax,
+      total: financialData.data.attributes.totalGross,
+      organizationName: "",
+      role: "",
+      side: "",
+    },
+  ];
 }
 
 function getExpenses(allSplits: Split[]): Split[] {

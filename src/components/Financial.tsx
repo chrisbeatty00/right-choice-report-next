@@ -1,7 +1,8 @@
 import styles from "@right-choice/styles/Financial.module.css";
-import type { FinancialData, TransactionData, SplitData, Deal } from "../types";
-import type { Splits } from "../lib/getSplits";
+import type { FinancialData, TransactionData, Deal } from "../types";
+import type { Splits, Split } from "../lib/getSplits";
 import cx from "classnames";
+import { CSSProperties } from "react";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -14,6 +15,15 @@ const formatCurrency = (amount: string | undefined) => {
   const value = parseFloat(amount);
   return value === 0 ? "-" : currencyFormatter.format(value).replace(/^\$/, "");
 };
+
+const formatSplit = (split: Split): Split => ({
+  ...split,
+  list: formatCurrency(split.list),
+  sell: formatCurrency(split.sell),
+  subtotal: formatCurrency(split.subtotal),
+  tax: formatCurrency(split.tax),
+  total: formatCurrency(split.total),
+});
 
 const calculateRates = (
   listOnTheFirstPercent: string | undefined,
@@ -106,78 +116,32 @@ function Financial({
   );
 }
 
-function IncomeTable({
-  listTotalNet,
-  sellTotalNet,
-  totalNet,
-  totalTax,
-  totalGross,
-  splits,
-}: {
-  listTotalNet?: string | undefined;
-  sellTotalNet?: string | undefined;
-  totalNet?: string | undefined;
-  totalTax?: string | undefined;
-  totalGross?: string | undefined;
-  splits: Splits;
-}) {
+function IncomeTable({ splits }: { splits: Splits }) {
+  const [commission] = splits.commission;
   return (
     <table className={styles.financial}>
       <tbody>
-        <tr>
-          <th>Income</th>
-          <th>Listing</th>
-          <th>Selling</th>
-          <th>Sub-Total</th>
-          <th>HST</th>
-          <th>Total</th>
-        </tr>
-        <tr>
-          <td>Commission</td>
-          <td className={styles.currency}>{formatCurrency(listTotalNet)}</td>
-          <td className={styles.currency}>{formatCurrency(sellTotalNet)}</td>
-          <td className={styles.currency}>{formatCurrency(totalNet)}</td>
-          <td className={styles.currency}>{formatCurrency(totalTax)}</td>
-          <td className={styles.currency}>{formatCurrency(totalGross)}</td>
-        </tr>
-        <tr>
-          <th colSpan={6}>Expenses</th>
-        </tr>
-        {splits.expenses.map((split) => (
-          <tr key={split.id}>
-            <td>
-              {split.side === "list" ? "Referral-" : ""}
-              {split.organizationName}
-            </td>
-            <td className={styles.currency}>-</td>
-            <td className={styles.currency}>{split.net}</td>
-            <td className={styles.currency}>{split.net}</td>
-            <td className={styles.currency}>{split.tax}</td>
-            <td className={styles.currency}>{split.total}</td>
-          </tr>
+        <HeadingRow />
+        <FinancialRow split={formatSplit(commission)} />
+        <TitleRow title="Expenses" />
+        {splits.expenses.map(formatSplit).map((split) => (
+          <FinancialRow
+            key={split.id}
+            split={{
+              ...split,
+              name:
+                (split.side === "list" ? "Referral-" : "") +
+                split.organizationName,
+            }}
+          />
         ))}
-        {splits.expenses.length > 0 && (
-          <tr>
-            <td>Base Office Commission</td>
-            <td className={styles.borderTop}></td>
-            <td className={styles.borderTop}></td>
-            <td className={styles.borderTop}></td>
-            <td className={styles.borderTop}></td>
-            <td className={styles.borderTop}></td>
-          </tr>
-        )}
-        <tr>
-          <th colSpan={6}>Agents</th>
-        </tr>
-        {splits.agents.map((split) => (
-          <tr key={split.id}>
-            <td>{split.name}</td>
-            <td className={styles.currency}>{split.net}</td>
-            <td className={styles.currency}>-</td>
-            <td className={styles.currency}>{split.net}</td>
-            <td className={styles.currency}>{split.tax}</td>
-            <td className={styles.currency}>{split.total}</td>
-          </tr>
+        <FinancialRow
+          split={{ name: "Base Office Commission" } as Split}
+          borderTop="thin"
+        />
+        <TitleRow title="Agents" />
+        {splits.agents.map(formatSplit).map((split) => (
+          <FinancialRow key={split.id} split={split} />
         ))}
         {splits.agents.length > 0 && (
           <tr>
@@ -189,11 +153,74 @@ function IncomeTable({
             <td className={cx(styles.currency, styles.borderBottomHeavy)}>-</td>
           </tr>
         )}
+
         <tr>
           <th colSpan={6}>Net to Office</th>
         </tr>
       </tbody>
     </table>
+  );
+}
+
+function FinancialRow({
+  split,
+  borderTop,
+}: {
+  split: Partial<Split>;
+  borderTop?: "thin" | "heavy" | undefined;
+}) {
+  const { name, sell, list, subtotal, tax, total } = split;
+
+  const borders = {
+    thin: "1px solid black",
+    heavy: "3px solid black",
+  };
+
+  const style: CSSProperties = {};
+  if (borderTop) {
+    style.borderTop = borders[borderTop];
+  }
+
+  return (
+    <tr>
+      <td>{name}</td>
+      <td className={styles.currency} style={style}>
+        {list}
+      </td>
+      <td className={styles.currency} style={style}>
+        {sell}
+      </td>
+      <td className={styles.currency} style={style}>
+        {subtotal}
+      </td>
+      <td className={styles.currency} style={style}>
+        {tax}
+      </td>
+      <td className={styles.currency} style={style}>
+        {total}
+      </td>
+    </tr>
+  );
+}
+
+function TitleRow({ title }: { title: string }) {
+  return (
+    <tr>
+      <th colSpan={6}>{title}</th>
+    </tr>
+  );
+}
+
+function HeadingRow() {
+  return (
+    <tr>
+      <th>Income</th>
+      <th>Listing</th>
+      <th>Selling</th>
+      <th>Sub-Total</th>
+      <th>HST</th>
+      <th>Total</th>
+    </tr>
   );
 }
 
